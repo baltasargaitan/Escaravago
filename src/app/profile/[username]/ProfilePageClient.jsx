@@ -1,23 +1,22 @@
 "use client";
-
-import { getProfileByUsername, getUserPosts, updateProfile } from "@/actions/profile.action";
-import { toggleFollow } from "@/actions/user.action";
-import PostCard from "@/components/PostCard";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { getProfileByUsername, getUserPosts, updateProfile } from "../../../actions/profile.action";  // Revisa la ruta
+import { toggleFollow } from "../../../actions/user.action";  // Revisa la ruta
+import PostCard from "../../../components/PostCard";
+import { Avatar, AvatarImage } from "../../../components/ui/avatar";
+import { Button } from "../../../components/ui/button";
+import { Card, CardContent } from "../../../components/ui/card";
 import {
   Dialog,
   DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+} from "../../../components/ui/dialog";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
+import { Separator } from "../../../components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
+import { Textarea } from "../../../components/ui/textarea";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { format } from "date-fns";
 import {
