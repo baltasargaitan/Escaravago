@@ -10,6 +10,7 @@ import { LinkIcon, MapPinIcon } from "lucide-react";
 
 async function Sidebar() {
   const authUser = await currentUser();
+  console.log('Usuario:' , authUser);
   if (!authUser) return <UnAuthenticatedSidebar />;
 
   const user = await getUserByClerkId(authUser.id);

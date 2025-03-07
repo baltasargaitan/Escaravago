@@ -7,7 +7,9 @@ import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Home() {
   const user = await currentUser();
-  const posts = await getPosts();
+  console.log("Usuario autenticado:", user); // Depuración
+
+  const posts = await getPosts() || []; 
   const dbUserId = await getDbUserId();
 
   return (
@@ -16,15 +18,17 @@ export default async function Home() {
         {user ? <CreatePost /> : null}
 
         <div className="space-y-6">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} dbUserId={dbUserId} />
-          ))}
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <PostCard key={post.id} post={post} dbUserId={dbUserId} />
+            ))
+          ) : (
+            <p className="text-center text-gray-500">No hay publicaciones disponibles.</p>
+          )}
         </div>
       </div>
 
-      <div className="hidden lg:block lg:col-span-4 sticky top-20">
-
-      </div>
+      <div className="hidden lg:block lg:col-span-4 sticky top-20"></div>
     </div>
   );
 }

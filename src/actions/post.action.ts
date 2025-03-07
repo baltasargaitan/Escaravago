@@ -4,7 +4,7 @@ import prisma from "../lib/prisma";
 import { getDbUserId } from "./user.action";
 import { revalidatePath } from "next/cache";
 
-export async function createPost(content, image) {
+export async function createPost(content: string, image: string) {
   try {
     const userId = await getDbUserId();
 
@@ -17,8 +17,8 @@ export async function createPost(content, image) {
         authorId: userId,
       },
     });
-
-    revalidatePath("/"); // purgar la caché para la página de inicio
+    console.log(image)
+    revalidatePath("/"); // purge the cache for the home page
     return { success: true, post };
   } catch (error) {
     console.error("Failed to create post:", error);
@@ -77,12 +77,12 @@ export async function getPosts() {
   }
 }
 
-export async function toggleLike(postId) {
+export async function toggleLike(postId: string) {
   try {
     const userId = await getDbUserId();
     if (!userId) return;
 
-    // comprobar si existe un like
+    // check if like exists
     const existingLike = await prisma.like.findUnique({
       where: {
         userId_postId: {
@@ -100,7 +100,7 @@ export async function toggleLike(postId) {
     if (!post) throw new Error("Post not found");
 
     if (existingLike) {
-      // quitar like
+      // unlike
       await prisma.like.delete({
         where: {
           userId_postId: {
@@ -110,7 +110,7 @@ export async function toggleLike(postId) {
         },
       });
     } else {
-      // dar like y crear notificación (solo si le gusta el post de otra persona)
+      // like and create notification (only if liking someone else's post)
       await prisma.$transaction([
         prisma.like.create({
           data: {
@@ -123,8 +123,8 @@ export async function toggleLike(postId) {
               prisma.notification.create({
                 data: {
                   type: "LIKE",
-                  userId: post.authorId, // destinatario (autor del post)
-                  creatorId: userId, // persona que le dio like
+                  userId: post.authorId, // recipient (post author)
+                  creatorId: userId, // person who liked
                   postId,
                 },
               }),
@@ -141,7 +141,7 @@ export async function toggleLike(postId) {
   }
 }
 
-export async function createComment(postId, content) {
+export async function createComment(postId: string, content: string) {
   try {
     const userId = await getDbUserId();
 
@@ -155,9 +155,9 @@ export async function createComment(postId, content) {
 
     if (!post) throw new Error("Post not found");
 
-    // Crear comentario y notificación en una transacción
+    // Create comment and notification in a transaction
     const [comment] = await prisma.$transaction(async (tx) => {
-      // Crear comentario primero
+      // Create comment first
       const newComment = await tx.comment.create({
         data: {
           content,
@@ -166,7 +166,7 @@ export async function createComment(postId, content) {
         },
       });
 
-      // Crear notificación si se comenta en el post de otra persona
+      // Create notification if commenting on someone else's post
       if (post.authorId !== userId) {
         await tx.notification.create({
           data: {
@@ -190,7 +190,7 @@ export async function createComment(postId, content) {
   }
 }
 
-export async function deletePost(postId) {
+export async function deletePost(postId: string) {
   try {
     const userId = await getDbUserId();
 
@@ -206,7 +206,7 @@ export async function deletePost(postId) {
       where: { id: postId },
     });
 
-    revalidatePath("/"); // purgar la caché
+    revalidatePath("/"); // purge the cache
     return { success: true };
   } catch (error) {
     console.error("Failed to delete post:", error);
